@@ -54,16 +54,45 @@ function getFileFn(req, res) {
     var data = {
         url: 'http://' + master.getIpMaster() + ':' + config.getConfig().portMaster + config.getConfig().apiMasterGetFile,
         method: 'POST',
-        json: req.body
+        json: {
+            guid: req.body.guid
+        }
     };
+
+    var fileReq = {
+        user: req.body.user,
+        path: req.body.path
+    };
+
+    //fs.createReadStream("/Users/Caim03/Documents/prova.txt").pipe(res);
+    /*res.write(file, 'binary');
+    res.end();*/
 
     request(data, function(err, response) {
         if (err) {
             console.log(err);
-            return null;
         }
         else {
-            res.send(response.body);
+            var slaves = response.body;
+            for(var i = 0; i < slaves.length; i++) {
+                var data = {
+                    url: 'http://' + slaves[i].slaveIp + ':' + config.getConfig().portMaster + config.getConfig().apiSlaveGetFile,
+                    method: 'POST',
+                    json: fileReq
+                };
+
+                request(data, function(err, response2) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        console.log(response2.body);
+                        res.send(response2.body);
+                        res.end();
+                        return;
+                    }
+                });
+            }
         }
     })
 }
