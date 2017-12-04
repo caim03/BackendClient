@@ -23,7 +23,6 @@ function getMasterFn() {
 
     var res = syncRequest(data.method, data.url);
     master.setIpMaster(JSON.parse(res.getBody('utf8')).masterIp);  // utf8 convert body from buffer to string
-
     console.log(master.getIpMaster());
 }
 
@@ -141,7 +140,11 @@ function uploadFileFn(req, response) {
                                 if(jsonRes.type === 'FILE_SAVED_SUCCESS')
                                 {
                                     console.log("Uploading "+jsonRes.nameFile+" SUCCESS!!!!!\n");
-                                    //response.statusCode = 200;
+                                    response.status(200);
+                                    response.send({
+                                        type: "UPLOAD",
+                                        state: "Success"
+                                    })
                                 }
                             }
                         });
