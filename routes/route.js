@@ -11,4 +11,5 @@ module.exports = function (app) {
     app.post('/api/backend/getFile', controller.getFile);
 
     app.post('/api/backend/uploadFile', middleware, controller.uploadFile);
+    app.post('/api/backend/deleteFile', controller.deleteFile);
 };

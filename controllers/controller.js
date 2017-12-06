@@ -12,6 +12,7 @@ exports.getMaster = getMasterFn;
 exports.getDirectoryTree = getDirectoryTreeFn;
 exports.getFile = getFileFn;
 exports.uploadFile = uploadFileFn;
+exports.deleteFile = deleteFileFn;
 
 function getMasterFn() {
     console.log("Searching master server...");
@@ -74,25 +75,23 @@ function getFileFn(req, res) {
         }
         else {
             var slaves = response.body;
-            for(var i = 0; i < slaves.length; i++) {
-                var data = {
-                    url: 'http://' + slaves[i].slaveIp + ':' + config.getConfig().portMaster + config.getConfig().apiSlaveGetFile,
-                    method: 'POST',
-                    json: fileReq
-                };
-
-                request(data, function(err, response2) {
-                    if (err) {
-                        console.log(err);
+            var i = 0;
+            var data = {
+                url: 'http://' + slaves[i].slaveIp + ':' + config.getConfig().portMaster + config.getConfig().apiSlaveGetFile,
+                method: 'POST',
+                json: fileReq
+            };
+            request(data, function(err, response2) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    //console.log(response2.body);
+                    res.send(response2.body);
+                    res.end();
+                    return;
                     }
-                    else {
-                        console.log(response2.body);
-                        res.send(response2.body);
-                        res.end();
-                        return;
-                    }
-                });
-            }
+            });
         }
     })
 }
@@ -183,5 +182,27 @@ function uploadFileFn(req, response) {
         }
 
     })
+}
 
+function deleteFileFn(req, response) {
+    var metadata = {
+        url: 'http://' + master.getIpMaster() + ':' + config.getConfig().portMaster + config.getConfig().apiMasterDeleteFile,
+        method: 'POST',
+        json: {
+            type: "REMOVAL",
+            relPath: req.body.path,
+            idUSer: req.body.idUser
+        }
+    };
+
+    request(metadata, function(err, res) {
+        if(err) {
+            console.log(err);
+        }
+        else {
+            if (res.body.type === "DELETE_SUCCESS") {
+                response.send(res.body);
+            }
+        }
+    })
 }
