@@ -56,7 +56,8 @@ function getFileFn(req, res) {
         url: 'http://' + master.getIpMaster() + ':' + config.getConfig().portMaster + config.getConfig().apiMasterGetFile,
         method: 'POST',
         json: {
-            guid: req.body.guid
+            guid: req.body.guid,
+            user: req.body.user
         }
     };
 
@@ -185,13 +186,14 @@ function uploadFileFn(req, response) {
 }
 
 function deleteFileFn(req, response) {
+    console.log("DELETE");
     var metadata = {
         url: 'http://' + master.getIpMaster() + ':' + config.getConfig().portMaster + config.getConfig().apiMasterDeleteFile,
         method: 'POST',
         json: {
             type: "REMOVAL",
             relPath: req.body.path,
-            idUSer: req.body.idUser
+            idUser: req.body.idUser
         }
     };
 
@@ -202,6 +204,9 @@ function deleteFileFn(req, response) {
         else {
             if (res.body.type === "DELETE_SUCCESS") {
                 response.send(res.body);
+            }
+            else {
+                response.send(res.body.type);
             }
         }
     })
