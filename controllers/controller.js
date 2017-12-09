@@ -13,6 +13,9 @@ exports.getDirectoryTree = getDirectoryTreeFn;
 exports.getFile = getFileFn;
 exports.uploadFile = uploadFileFn;
 exports.deleteFile = deleteFileFn;
+exports.addUser = addUserFn;
+exports.login = loginFn;
+
 
 function getMasterFn() {
     console.log("Searching master server...");
@@ -205,4 +208,68 @@ function deleteFileFn(req, response) {
             }
         }
     })
+}
+
+function addUserFn(req, response) {
+
+  console.log("Registration request: ("+req.body.idUser+", "+req.body.password+")");
+
+  var obj = {
+    url: 'http://' + config.ipGateway + ':' + config.portGateway + config.apiRegistration,
+    method: 'POST',
+    json: {
+      type: "REGISTRATION",
+      idUser: req.body.idUser,
+      password: req.body.password
+    }
+  };
+
+  //TODO Aggiungere response.send
+  request(obj, function (err, res) {
+    if (err) {
+      console.log(err);
+    }
+    else if(res.body.status === "REGISTRATION_SUCCESS") {
+      console.log("Registration success!");
+ //     response.send(res.body)
+    }
+    else if(res.body.status === 'USER_ID_EXISTS')
+      console.log("Id User "+req.body.idUser+" already exists!");
+ //     response.send(res.body);
+  });
+}
+
+
+function loginFn(req, response) {
+  console.log(req.body.idUser+" wants to login.");
+
+  var obj = {
+    url: 'http://' + config.ipGateway + ':' + config.portGateway + config.apiLogin,
+    method: 'POST',
+    json: {
+      type: "LOGIN",
+      idUser: req.body.idUser,
+      password: req.body.password
+    }
+  };
+
+
+  //TODO Aggiungere response.send
+   request(obj, function (err, res) {
+
+    if (err) {
+      console.log(err);
+    }
+    else if (res.body.status === "LOGIN_SUCCESS") {
+      console.log("Login success for "+req.body.idUser+"!");
+    }
+    else if(res.body.status === "WRONG_USER_ID")
+    {
+      console.log("User id "+req.body.idUser+" does not exist!");
+    }
+    else if(res.body.status === "WRONG_PASSWORD")
+    {
+      console.log("Wrong password for "+req.body.idUser+"!");
+    }
+  });
 }
