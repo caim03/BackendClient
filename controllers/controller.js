@@ -252,7 +252,7 @@ function loginFn(req, response) {
     method: 'POST',
     json: {
       type: "LOGIN",
-      idUser: req.body.idUser,
+      idUser: req.body.username,
       password: req.body.password
     }
   };
