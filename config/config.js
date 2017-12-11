@@ -15,7 +15,8 @@ var config = {
     apiSlaveNewGuid: "/api/chunk/newChunkGuidClient",
     apiSlaveNewChunk: "/api/chunk/newChunk",
     apiSlaveGetFile: "/api/chunk/readFile",
-    apiRegistration: "/api/lb/edge/registration"
+    apiRegistration: "/api/lb/edge/registration",
+    apiLogin:"/api/lb/edge/login"
 
 };
 

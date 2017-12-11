@@ -237,17 +237,18 @@ function addUserFn(req, response) {
     }
     else if(res.body.status === "REGISTRATION_SUCCESS") {
       console.log("Registration success!");
-      response.send({type: "SUCCESS"});
+      response.send({type: "REGISTRATION_SUCCESS"});
     }
-    else if(res.body.status === 'USER_ID_EXISTS')
-      console.log("Id User "+req.body.username+" already exists!");
-      response.send({type: "FAILURE"});
+    else if(res.body.status === 'USER_ID_EXISTS') {
+        console.log("Id User " + req.body.username + " already exists!");
+        response.send({type: "FAILURE"});
+    }
   });
 }
 
 
 function loginFn(req, response) {
-  console.log(req.body.idUser+" wants to login.");
+  console.log(req.body.username+" wants to login.");
 
   var obj = {
     url: 'http://' + config.getConfig().ipGateway + ':' + config.getConfig().portGateway + config.getConfig().apiLogin,
