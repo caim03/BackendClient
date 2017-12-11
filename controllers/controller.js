@@ -229,18 +229,17 @@ function addUserFn(req, response) {
     }
   };
 
-  //TODO Aggiungere response.send
   request(obj, function (err, res) {
     if (err) {
       console.log(err);
     }
     else if(res.body.status === "REGISTRATION_SUCCESS") {
       console.log("Registration success!");
- //     response.send(res.body)
+      response.send({type: "SUCCESS"});
     }
     else if(res.body.status === 'USER_ID_EXISTS')
       console.log("Id User "+req.body.idUser+" already exists!");
- //     response.send(res.body);
+      response.send({type: "FAILURE"});
   });
 }
 
@@ -258,23 +257,24 @@ function loginFn(req, response) {
     }
   };
 
-
-  //TODO Aggiungere response.send
-   request(obj, function (err, res) {
+  request(obj, function (err, res) {
 
     if (err) {
       console.log(err);
     }
     else if (res.body.status === "LOGIN_SUCCESS") {
       console.log("Login success for "+req.body.idUser+"!");
+      response.send({type: "LOGIN_SUCCESS"});
     }
     else if(res.body.status === "WRONG_USER_ID")
     {
       console.log("User id "+req.body.idUser+" does not exist!");
+      response.send({type: "WRONG_USER_ID"});
     }
     else if(res.body.status === "WRONG_PASSWORD")
     {
       console.log("Wrong password for "+req.body.idUser+"!");
+      response.send({type: "WRONG_PASSWORD"});
     }
   });
 }
