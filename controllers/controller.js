@@ -217,17 +217,19 @@ function deleteFileFn(req, response) {
 
 function addUserFn(req, response) {
 
-  console.log("Registration request: ("+req.body.idUser+", "+req.body.password+")");
+  console.log("Registration request: ("+req.body.username+", "+req.body.password+")");
 
   var obj = {
-    url: 'http://' + config.ipGateway + ':' + config.portGateway + config.apiRegistration,
+    url: 'http://' + config.getConfig().ipGateway + ':' + config.getConfig().portGateway + config.getConfig().apiRegistration,
     method: 'POST',
     json: {
       type: "REGISTRATION",
-      idUser: req.body.idUser,
+      idUser: req.body.username,
       password: req.body.password
     }
   };
+
+  console.log(obj);
 
   request(obj, function (err, res) {
     if (err) {
@@ -238,7 +240,7 @@ function addUserFn(req, response) {
       response.send({type: "SUCCESS"});
     }
     else if(res.body.status === 'USER_ID_EXISTS')
-      console.log("Id User "+req.body.idUser+" already exists!");
+      console.log("Id User "+req.body.username+" already exists!");
       response.send({type: "FAILURE"});
   });
 }
@@ -248,7 +250,7 @@ function loginFn(req, response) {
   console.log(req.body.idUser+" wants to login.");
 
   var obj = {
-    url: 'http://' + config.ipGateway + ':' + config.portGateway + config.apiLogin,
+    url: 'http://' + config.getConfig().ipGateway + ':' + config.getConfig().portGateway + config.getConfig().apiLogin,
     method: 'POST',
     json: {
       type: "LOGIN",

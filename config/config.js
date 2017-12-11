@@ -3,7 +3,8 @@
  */
 
 var config = {
-    ipGateway: "34.195.19.72",
+    // ipGateway: "34.195.19.72",
+    ipGateway:"172.17.0.2",
     portGateway: "6602",
     apiGateway: "/api/lb/edge/subscribe",
     portMaster: "6601",
@@ -13,7 +14,9 @@ var config = {
     apiMasterDeleteFile: "/api/master/deleteFile",
     apiSlaveNewGuid: "/api/chunk/newChunkGuidClient",
     apiSlaveNewChunk: "/api/chunk/newChunk",
-    apiSlaveGetFile: "/api/chunk/readFile"
+    apiSlaveGetFile: "/api/chunk/readFile",
+    apiRegistration: "/api/lb/edge/registration"
+
 };
 
 exports.getConfig = getConfigFn;
