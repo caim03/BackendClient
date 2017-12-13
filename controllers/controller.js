@@ -267,22 +267,20 @@ function loginFn(req, response) {
       console.log(err);
     }
     else if (res.body.status === "LOGIN_SUCCESS") {
-      console.log("Login success for "+req.body.idUser+"!");
+      console.log("Login success for "+req.body.username+"!");
       response.send({type: "LOGIN_SUCCESS"});
     }
     else if(res.body.status === "WRONG_USER_ID")
     {
-      console.log("User id "+req.body.idUser+" does not exist!");
+      console.log("User id "+req.body.username+" does not exist!");
       response.send({type: "WRONG_USER_ID"});
     }
     else if(res.body.status === "WRONG_PASSWORD")
     {
-      console.log("Wrong password for "+req.body.idUser+"!");
+      console.log("Wrong password for "+req.body.username+"!");
       response.send({type: "WRONG_PASSWORD"});
     }
   });
-  response.send({type: "LOGIN_SUCCESS"});
-
 }
 
 function verifyConnectionFn() {
