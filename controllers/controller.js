@@ -26,32 +26,48 @@ function getMasterFn() {
         method: 'GET'
     };
 
-    var res = syncRequest(data.method, data.url);
-    master.setIpMaster(JSON.parse(res.getBody('utf8')).masterIp);  // utf8 convert body from buffer to string
-    console.log(master.getIpMaster());
+    try{
+        var res = syncRequest(data.method, data.url);
+        master.setIpMaster(JSON.parse(res.getBody('utf8')).masterIp);  // utf8 convert body from buffer to string
+        console.log(master.getIpMaster());
+    }
+    catch(err){
+        console.log(err);
+        master.setIpMaster(null);
+    }
+
 }
 
 function getDirectoryTreeFn(req, res) {
     console.log("Connecting master...");
 
-    var data = {
-        url: 'http://' + master.getIpMaster() + ':' + config.getConfig().portMaster + config.getConfig().apiMasterTree,
-        method: 'POST',
-        json: {
-            username: req.body.username
-        }
-    };
+    if(master.getIpMaster() === null || master.getIpMaster() === undefined) {
+        res.send({
+            type: "ERROR_CONNECTION"
+        });
+        res.end();
+    }
 
-    request(data, function(err, response) {
-        if (err) {
-            console.log(err);
-            return null;
-        }
-        else {
-            res.send(response.body);
-            res.end();
-        }
-    });
+    else {
+        var data = {
+            url: 'http://' + master.getIpMaster() + ':' + config.getConfig().portMaster + config.getConfig().apiMasterTree,
+            method: 'POST',
+            json: {
+                username: req.body.username
+            }
+        };
+
+        request(data, function (err, response) {
+            if (err) {
+                console.log(err);
+                return null;
+            }
+            else {
+                res.send(response.body);
+                res.end();
+            }
+        });
+    }
 }
 
 function getFileFn(req, res) {
