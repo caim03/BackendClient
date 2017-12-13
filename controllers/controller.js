@@ -49,6 +49,7 @@ function getDirectoryTreeFn(req, res) {
         }
         else {
             res.send(response.body);
+            res.end();
         }
     });
 }
@@ -94,8 +95,7 @@ function getFileFn(req, res) {
                     //console.log(response2.body);
                     res.send(response2.body);
                     res.end();
-                    return;
-                    }
+                }
             });
         }
     })
@@ -107,6 +107,8 @@ function uploadFileFn(req, response) {
     console.log(req.files.file);
     console.log(req.body.username);
     console.log(req.body.path);
+
+    var savedOne = false;
 
     var file = req.files.file;
     var username = req.body.username;
@@ -127,15 +129,15 @@ function uploadFileFn(req, response) {
         }
     };
 
-    request(obj, function(err, res){
+    request(obj, function(err, res1){
         if(err){
             console.log(err);
         }
 
-        if(res.body.type === 'UPINFO') {
-            var guid = res.body.guid;
+        if(res1.body.type === 'UPINFO') {
+            var guid = res1.body.guid;
 
-            res.body.ipSlaves.forEach(function (ip) {
+            res1.body.ipSlaves.forEach(function (ip) {
                 console.log("->  Sending (" + guid + " - " + username + ") to " + ip);
                 var objGuidUser = {
                     url: 'http://' + ip + ':' + config.getConfig().portMaster + config.getConfig().apiSlaveNewGuid,
@@ -148,11 +150,11 @@ function uploadFileFn(req, response) {
                 };
 
                 //Sending guid-idClient to slaves
-                request(objGuidUser, function (err, res) {
+                request(objGuidUser, function (err, res2) {
                     if (err) {
                         console.log(err);
                     }
-                    if (res.body.type === 'ACK_PENDING') {
+                    if (res2.body.type === 'ACK_PENDING') {
                         console.log("Received ack to upload file from "+ip);
 
                         console.log("Sending to " + ip +'\n');
@@ -163,21 +165,23 @@ function uploadFileFn(req, response) {
                             my_file: fs.createReadStream(file.path)
                         };
 
-                        request.post({url:'http://'+ ip + ':' + config.getConfig().portMaster + config.getConfig().apiSlaveNewChunk, formData: formData}, function optionalCallback(err, res) {
+                        request.post({url:'http://'+ ip + ':' + config.getConfig().portMaster + config.getConfig().apiSlaveNewChunk, formData: formData}, function(err, res3) {
                             if (err) {
                                 return console.error('Upload failed:', err);
                             }
-                            else if(res.statusCode === 200)
+                            else if(res3.statusCode === 200)
                             {
-                                var jsonRes = JSON.parse(res.body);
-                                if(jsonRes.type === 'FILE_SAVED_SUCCESS')
+                                var jsonRes = JSON.parse(res3.body);
+                                if(jsonRes.type === 'FILE_SAVED_SUCCESS' && savedOne === false)
                                 {
+                                    savedOne = true;
                                     console.log("Uploading "+jsonRes.nameFile+" SUCCESS!!!!!\n");
                                     response.status(200);
                                     response.send({
                                         type: "UPLOAD",
                                         state: "Success"
-                                    })
+                                    });
+                                    response.end();
                                 }
                             }
                         });
@@ -185,7 +189,6 @@ function uploadFileFn(req, response) {
                 });
             });
         }
-
     })
 }
 
@@ -208,9 +211,11 @@ function deleteFileFn(req, response) {
         else {
             if (res.body.type === "DELETE_SUCCESS") {
                 response.send(res.body);
+                response.end();
             }
             else {
                 response.send(res.body.type);
+                response.end();
             }
         }
     })
@@ -239,10 +244,12 @@ function addUserFn(req, response) {
     else if(res.body.status === "REGISTRATION_SUCCESS") {
       console.log("Registration success!");
       response.send({type: "REGISTRATION_SUCCESS"});
+      response.end();
     }
     else if(res.body.status === 'USER_ID_EXISTS') {
         console.log("Id User " + req.body.username + " already exists!");
         response.send({type: "FAILURE"});
+        response.end();
     }
   });
 }
@@ -269,16 +276,19 @@ function loginFn(req, response) {
     else if (res.body.status === "LOGIN_SUCCESS") {
       console.log("Login success for "+req.body.username+"!");
       response.send({type: "LOGIN_SUCCESS"});
+      response.end();
     }
     else if(res.body.status === "WRONG_USER_ID")
     {
       console.log("User id "+req.body.username+" does not exist!");
       response.send({type: "WRONG_USER_ID"});
+      response.end();
     }
     else if(res.body.status === "WRONG_PASSWORD")
     {
       console.log("Wrong password for "+req.body.username+"!");
       response.send({type: "WRONG_PASSWORD"});
+      response.end();
     }
   });
 }
