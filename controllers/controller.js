@@ -15,6 +15,7 @@ exports.uploadFile = uploadFileFn;
 exports.deleteFile = deleteFileFn;
 exports.addUser = addUserFn;
 exports.login = loginFn;
+exports.verifyConnection = verifyConnectionFn;
 
 
 function getMasterFn() {
@@ -280,4 +281,21 @@ function loginFn(req, response) {
       response.send({type: "WRONG_PASSWORD"});
     }
   });
+  response.send({type: "LOGIN_SUCCESS"});
+
+}
+
+function verifyConnectionFn() {
+    setInterval(function () {
+        var data = {
+            url: 'http://' + config.getConfig().ipGateway + ':' + config.getConfig().portGateway + config.getConfig().apiGateway,
+            method: 'GET'
+        };
+
+        request(data, function(err, res){
+            console.log(JSON.parse(res.body).masterIp);
+            master.setIpMaster(JSON.parse(res.body).masterIp);
+            console.log(master.getIpMaster());
+        })
+    }, config.getConfig().delayPing);
 }

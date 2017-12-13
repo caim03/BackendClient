@@ -47,3 +47,4 @@ app.listen(port, '0.0.0.0', function() {
 
 var controller = require('./controllers/controller');
 controller.getMaster();
+controller.verifyConnection();

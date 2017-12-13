@@ -4,10 +4,11 @@
 
 var config = {
     // ipGateway: "34.195.19.72",
-    ipGateway:"172.17.0.2",
+    ipGateway:"18.221.213.162",
     portGateway: "6602",
     apiGateway: "/api/lb/edge/subscribe",
     portMaster: "6601",
+    delayPing: 60000,
     apiMasterTree: "/api/master/getDirectoryTree",
     apiMasterUpload: "/api/master/newFileData",
     apiMasterGetFile: "/api/master/readFile",
