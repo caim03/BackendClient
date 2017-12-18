@@ -3,8 +3,7 @@
  */
 
 var config = {
-    // ipGateway: "34.195.19.72",
-    ipGateway:"18.221.213.162",
+    ipGateway: "34.195.19.72",
     portGateway: "6602",
     apiGateway: "/api/lb/edge/subscribe",
     portMaster: "6601",
