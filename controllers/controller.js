@@ -256,6 +256,8 @@ function addUserFn(req, response) {
   request(obj, function (err, res) {
     if (err) {
       console.log(err);
+      response.send({type: "CONNECTION_ERROR"});
+      response.end();
     }
     else if(res.body.status === "REGISTRATION_SUCCESS") {
       console.log("Registration success!");
@@ -288,6 +290,8 @@ function loginFn(req, response) {
 
     if (err) {
       console.log(err);
+      response.send({type: "CONNECTION_ERROR"});
+      response.end();
     }
     else if (res.body.status === "LOGIN_SUCCESS") {
       console.log("Login success for "+req.body.username+"!");
