@@ -18,6 +18,9 @@ exports.login = loginFn;
 exports.verifyConnection = verifyConnectionFn;
 
 
+/**
+ * Questa funzione permette di ottenere l'indirizzo ip del master della fog
+ */
 function getMasterFn() {
     console.log("Searching master server...");
 
@@ -38,6 +41,11 @@ function getMasterFn() {
 
 }
 
+/**
+ * Questa funzione permette di richiedere al master della fog l'intero file system di un determinato utente
+ * @param req
+ * @param res
+ */
 function getDirectoryTreeFn(req, res) {
     console.log("Connecting master...");
 
@@ -70,6 +78,11 @@ function getDirectoryTreeFn(req, res) {
     }
 }
 
+/**
+ * Questa funzione permette di ottenere il contenuto di un file
+ * @param req
+ * @param res
+ */
 function getFileFn(req, res) {
     console.log("Getting file...");
 
@@ -86,10 +99,6 @@ function getFileFn(req, res) {
         user: req.body.user,
         path: req.body.path
     };
-
-    //fs.createReadStream("/Users/Caim03/Documents/prova.txt").pipe(res);
-    /*res.write(file, 'binary');
-    res.end();*/
 
     request(data, function(err, response) {
         if (err) {
@@ -108,7 +117,6 @@ function getFileFn(req, res) {
                     console.log(err);
                 }
                 else {
-                    //console.log(response2.body);
                     res.send(response2.body);
                     res.end();
                 }
@@ -117,6 +125,11 @@ function getFileFn(req, res) {
     })
 }
 
+/**
+ * Questa funzione permette di effettuare l'upload di un file
+ * @param req
+ * @param response
+ */
 function uploadFileFn(req, response) {
     console.log("Uploading file...");
 
@@ -138,7 +151,7 @@ function uploadFileFn(req, response) {
         json: {
             type: "METADATA",
             fileName: file.name,
-            origAbsPath: file.path, // path temporaneo, non indicativo!!!
+            origAbsPath: file.path,
             destRelPath: destPath,
             sizeFile: file.size,
             idUser: username
@@ -208,6 +221,11 @@ function uploadFileFn(req, response) {
     })
 }
 
+/**
+ * Questa funzione permette di eliminare un file
+ * @param req
+ * @param response
+ */
 function deleteFileFn(req, response) {
     console.log("DELETE");
     var metadata = {
@@ -237,6 +255,11 @@ function deleteFileFn(req, response) {
     })
 }
 
+/**
+ * Questa funzione permette di aggiungere un nuovo utente, contattando il gateway
+ * @param req
+ * @param response
+ */
 function addUserFn(req, response) {
 
   console.log("Registration request: ("+req.body.username+", "+req.body.password+")");
@@ -273,6 +296,11 @@ function addUserFn(req, response) {
 }
 
 
+/**
+ * Questa funzione permette di richiedere il login di un utente
+ * @param req
+ * @param response
+ */
 function loginFn(req, response) {
   console.log(req.body.username+" wants to login.");
 
@@ -313,6 +341,10 @@ function loginFn(req, response) {
   });
 }
 
+/**
+ * Questa funzione permette di verificare la connessione con il master; in particolare il backend client contatta
+ * periodicamente il gateway verificando se l'indirizzo del master è cambiato a seguito di fallimenti e ri-elezioni.
+ */
 function verifyConnectionFn() {
     setInterval(function () {
         var data = {
